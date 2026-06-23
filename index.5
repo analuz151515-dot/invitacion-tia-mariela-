@@ -1,0 +1,320 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Mi Cumpleaños! - Dorita</title>
+    
+    <!-- Tipografías elegantes de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Librería externa para el efecto de Confeti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fcedda; /* Fondo crema romántico */
+            font-family: 'Montserrat', sans-serif;
+            color: #4a4a4a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Portada inicial - "Ir a la invitación" */
+        #portada {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffffff;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.8s ease;
+        }
+
+        #portada h2 {
+            font-family: 'Alex Brush', cursive;
+            font-size: 55px;
+            color: #c5a059;
+            margin-bottom: 5px;
+            font-weight: normal;
+        }
+
+        .btn-entrar {
+            background-color: #c5a059;
+            color: white;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(197,160,89,0.4);
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        /* Tarjeta Principal */
+        .container {
+            max-width: 450px;
+            width: 90%;
+            background: white;
+            margin: 30px auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid #eaddca;
+            overflow: hidden;
+            text-align: center;
+            box-sizing: border-box;
+            padding-bottom: 30px;
+        }
+
+        .foto-cumple {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 3px solid #eaddca;
+        }
+
+        .contenido {
+            padding: 30px 25px;
+        }
+
+        h1 {
+            font-family: 'Alex Brush', cursive;
+            font-size: 60px;
+            color: #c5a059;
+            margin: 10px 0;
+            font-weight: normal;
+        }
+
+        /* Espacio elegante para la familia personalizada */
+        .pase-familia {
+            font-family: 'Alex Brush', cursive;
+            color: #b38f43;
+            font-size: 38px; /* Letra grande, cursiva y muy estilizada */
+            margin: 25px 0;
+            font-weight: normal;
+            background-color: #fdfaf4;
+            padding: 15px 10px;
+            border-radius: 12px;
+            border-top: 1px solid #eaddca;
+            border-bottom: 1px solid #eaddca;
+            line-height: 1.2;
+        }
+
+        /* Cuenta Regresiva */
+        .contador {
+            display: flex;
+            justify-content: space-around;
+            background: #fdfaf4;
+            padding: 15px 10px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border: 1px dashed #c5a059;
+        }
+
+        .bloque {
+            text-align: center;
+        }
+
+        .numero {
+            font-size: 24px;
+            font-weight: 600;
+            color: #c5a059;
+            display: block;
+        }
+
+        .etiqueta {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #777;
+        }
+
+        .datos {
+            font-size: 15px;
+            line-height: 1.8;
+            margin: 20px 0;
+        }
+
+        .btn-confirmar {
+            display: inline-block;
+            background-color: #e2799f;
+            color: white;
+            text-decoration: none;
+            padding: 14px 40px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(226,121,159,0.4);
+            margin-top: 15px;
+            text-transform: uppercase;
+        }
+
+        /* Botón de Música Flotante */
+        #reproductor-btn {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            background: white;
+            border: 1px solid #c5a059;
+            border-radius: 50%;
+            width: 50px; height: 50px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px; cursor: pointer; z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PORTADA DE ENTRADA -->
+    <div id="portada">
+        <div style="font-size: 40px;">✨🎂✨</div>
+        <h2>¡Estás Invitado!</h2>
+        <p>Haz clic abajo para abrir la tarjeta oficial</p>
+        <button class="btn-entrar" onclick="abrirInvitacion()">Ir a la invitación</button>
+    </div>
+
+    <!-- AUDIO -->
+    <audio id="musica" loop src="musica.mp3" preload="auto"></audio>
+    <button id="reproductor-btn" onclick="controlarMusica()">🎵</button>
+
+    <!-- TARJETA PRINCIPAL -->
+    <div class="container">
+        <img src="foto.jpg" alt="Dorita" class="foto-cumple" onerror="this.src='https://via.placeholder.com/450x300?text=Sube+tu+foto+a+GitHub'">
+        
+        <div class="contenido">
+            <div style="color: #c5a059; font-size: 14px; letter-spacing: 2px; font-weight: 600;">✨ 19 • JULIO ✨</div>
+            <h1>Dorita</h1>
+            
+            <!-- ESPACIO REQUERIDO: Por defecto dirá Liliana López y Familia en letra elegante -->
+            <div class="pase-familia" id="nombreFamilia">Invitación para:<br>Liliana López y Familia</div>
+
+            <p>Con el corazón lleno de alegría y gratitud a Dios por un año más de vida, quiero compartir contigo este momento tan importante.</p>
+
+            <!-- CUENTA REGRESIVA -->
+            <div class="contador">
+                <div class="bloque"><span class="numero" id="dias">00</span><span class="etiqueta">Días</span></div>
+                <div class="bloque"><span class="numero" id="horas">00</span><span class="etiqueta">Horas</span></div>
+                <div class="bloque"><span class="numero" id="minutos">00</span><span class="etiqueta">Min</span></div>
+                <div class="bloque"><span class="numero" id="segundos">00</span><span class="etiqueta">Seg</span></div>
+            </div>
+
+            <div class="datos">
+                <strong>FECHA:</strong> Domingo, 19 de Julio de 2026<br>
+                <strong>HORA:</strong> 1:00 PM<br>
+                <strong>LUGAR:</strong> Bosa Islandia<br>
+                Carrera 84 #73F -17 sur  , Bogotá
+            </div>
+
+            <p style="font-size: 13px; color: #777; font-style: italic;">Válido para las personas de este núcleo familiar. Por favor confirma antes del 10 de Julio.</p>
+
+            <!-- REEMPLAZA EL TELÉFONO AQUÍ: Cambia el 573204079948 por tu WhatsApp real -->
+            <a href="https://wa.me/573204079948?text=¡Hola!%20Confirmamos%20nuestra%20asistencia%20al%20cumpleaños%20de%20Dorita." class="btn-confirmar" target="_blank">
+                Confirmar Asistencia
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 1. Quitar portada, forzar música y lanzar confeti masivo
+        function abrirInvitacion() {
+            const portada = document.getElementById('portada');
+            portada.style.opacity = '0';
+            setTimeout(() => {
+                portada.style.display = 'none';
+                
+                // EFECTO ESPECIAL: Lluvia de confeti al abrir la tarjeta
+                lanzarConfeti();
+            }, 800);
+            
+            // Re-intento agresivo de reproducción de audio
+            const audio = document.getElementById('musica');
+            audio.muted = false;
+            audio.volume = 1.0;
+            
+            // Algunos navegadores necesitan volver a cargar el recurso tras la interacción
+            audio.load();
+            
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log("Audio sonando!");
+                }).catch(error => {
+                    console.log("Bloqueo remanente del navegador. Se requiere usar botón flotante.", error);
+                });
+            }
+        }
+
+        // Configuración de la animación de confeti
+        function lanzarConfeti() {
+            var duracion = 3 * 1000;
+            var fin = Date.now() + duracion;
+
+            (function frame() {
+                confetti({
+                    particleCount: 4,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.8 },
+                    colors: ['#c5a059', '#e2799f', '#fcedda']
+                });
+                confetti({
+                    particleCount: 4,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.8 },
+                    colors: ['#c5a059', '#e2799f', '#fcedda']
+                });
+
+                if (Date.now() < fin) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        function controlarMusica() {
+            const audio = document.getElementById('musica');
+            if (audio.paused) { audio.play(); } else { audio.pause(); }
+        }
+
+        // 2. Leer dinámicamente otras familias desde el link (?familia=Familia%20X)
+        const valores = window.location.search;
+        const urlParams = new URLSearchParams(valores);
+        var familia = urlParams.get('familia');
+        if(familia) {
+            document.getElementById('nombreFamilia').innerHTML = "Invitación para:<br>" + familia;
+        }
+
+        // 3. Cuenta regresiva funcional (19 de Julio a las 1:00 PM)
+        const fechaDestino = new Date('July 19, 2026 17:00:00').getTime();
+
+        setInterval(function() {
+            const ahora = new Date().getTime();
+            const diferencia = fechaDestino - ahora;
+
+            const d = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+            if (diferencia > 0) {
+                document.getElementById('dias').innerText = d < 10 ? '0' + d : d;
+                document.getElementById('horas').innerText = h < 10 ? '0' + h : h;
+                document.getElementById('minutos').innerText = m < 10 ? '0' + m : m;
+                document.getElementById('segundos').innerText = s < 10 ? '0' + s : s;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
